@@ -2,56 +2,76 @@
 using namespace std;
 
 template <typename T>
-class Stack {
-    T *arr;
-    int capacity = 0;
-    int size = 0;
+class Queue {
+    T* arr;
+    int capacity;
+    int size;
+    int nextIndex;
+    int firstIndex;
     public:
-        Stack() {
-            capacity = 4;
+        Queue() {
+            capacity = 5;
             arr = new T[capacity];
+            size = 0;
+            nextIndex = 0;
+            firstIndex = -1;
         }
-        bool isEmpty() {
-            return size==0;
-        }
+
         int getSize() {
             return size;
         }
-        void push(int x) {
+
+        bool isEmpty() {
+            return size==0;
+        }
+
+        void push(T x) {
             if(size==capacity) {
-                capacity *= 2;
                 T* newArr = new T[2*capacity];
-                for(int i=0; i<size; i++) {
-                    newArr[i] = arr[i];
+                int j = 0;
+                for(int i=firstIndex; i<size; i++) {
+                    newArr[j++] = arr[i];
                 }
-                capacity = 2*capacity;
-                delete []arr; 
+                for(int i=0; i<firstIndex; i++) {
+                    newArr[j++] = arr[i];
+                }
+                capacity *= 2;
+                delete []arr;
                 arr = newArr;
+                firstIndex = 0;
+                nextIndex = size;
             }
-            arr[size] = x;
+            arr[nextIndex] = x;
+            nextIndex = (nextIndex+1)%capacity;
+            if(size==0) firstIndex = 0;
             size++;
         }
+
         void pop() {
-            if(isEmpty()) return;
+            if(isEmpty()) {
+                cout << "Queue empty" << endl;
+                return;
+            }
+            firstIndex = (firstIndex+1)%capacity;
             size--;
         }
-        T top() {
+
+        T front() {
             if(isEmpty()) {
-                cout << "Stack empty" << endl;
-                return -1;
+                cout << "Queue empty" << endl;
+                return 0;
             }
-            return arr[size-1];
+            return arr[firstIndex];
         }
 };
 
 int main() {
-    Stack<int> s;
-    for(int i=1; i<=10; i++) s.push(i);
-    while(!s.isEmpty()) {
-        cout << s.top() << endl;
-        s.pop();
+    Queue<char> q;
+    for(int i=0; i<10; i++) q.push(i+'a');
+    while(!q.isEmpty()) {
+        cout << q.front() << endl;
+        q.pop();
     }
-    cout << s.getSize() << endl;
     return 0;
 }
 
