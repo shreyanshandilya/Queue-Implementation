@@ -1,67 +1,57 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class PriorityQueue{
-    vector<int> pq;
-
+template <typename T>
+class Stack {
+    T *arr;
+    int capacity = 0;
+    int size = 0;
     public:
-
+        Stack() {
+            capacity = 4;
+            arr = new T[capacity];
+        }
         bool isEmpty() {
-            return pq.size()==0;
+            return size==0;
         }
-
-        int getMin() {
-            if(isEmpty()) return 0;
-            else return pq[0];
+        int getSize() {
+            return size;
         }
-
-        void insert(int value) {
-            pq.push_back(value);
-            int cI = pq.size()-1;
-            while(cI>0) {
-                int pI = (cI-1)/2;
-                if(pq[pI] > pq[cI]) {
-                    swap(pq[pI], pq[cI]);
-                    cI = pI;
+        void push(int x) {
+            if(size==capacity) {
+                capacity *= 2;
+                T* newArr = new T[2*capacity];
+                for(int i=0; i<size; i++) {
+                    newArr[i] = arr[i];
                 }
-                else break;
+                capacity = 2*capacity;
+                delete []arr; 
+                arr = newArr;
             }
+            arr[size] = x;
+            size++;
         }
-
-        int removeMin() {
-            if(isEmpty()) return 0;
-            int ans = pq[0];
-            swap(pq[0], pq[pq.size()-1]);
-            pq.pop_back();
-            int pi = 0;
-            int mini = pi; 
-            while(true) {
-                int lci = 2*pi+1;
-                int rci = 2*pi+2;
-                if(lci<pq.size() && pq[mini] > pq[lci]) {
-                    mini = lci;
-                }
-                if(rci<pq.size() && pq[mini] > pq[rci]) {
-                    mini = rci;
-                }
-                if(mini==pi) break;
-                swap(pq[pi], pq[mini]);
-                pi = mini;
+        void pop() {
+            if(isEmpty()) return;
+            size--;
+        }
+        T top() {
+            if(isEmpty()) {
+                cout << "Stack empty" << endl;
+                return -1;
             }
-            return ans;
+            return arr[size-1];
         }
-
 };
 
 int main() {
-    PriorityQueue pq;
-    pq.insert(1);
-    pq.insert(2);
-    pq.insert(4);
-    pq.insert(3);
-    while(!pq.isEmpty()) {
-        cout << pq.removeMin() << endl;
+    Stack<int> s;
+    for(int i=1; i<=10; i++) s.push(i);
+    while(!s.isEmpty()) {
+        cout << s.top() << endl;
+        s.pop();
     }
+    cout << s.getSize() << endl;
     return 0;
 }
 
